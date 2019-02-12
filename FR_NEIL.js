@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name 		FR_NEIL
 // @version		2.3
-// @description	BOT Autonome et contrôlable de hack et d'amélioration
+// @description		BOT Autonome et contrôlable de hack et d'amélioration
 // @author 		Neïlérua
 // @match 		*://s0urce.io/*
 // ==/UserScript==
@@ -17,35 +17,28 @@ config = {
 
 	autoTarget: true,			// Attaque automatique
 	autoAttack: true,			// Cibles automatique
-	log: true,					// Logs en console
+	log: true,				// Logs en console
 	minage: true,				// Amélioration des mineurs automatique
 
 	freq: {
-		word: 1000,				// Temps avant de deviner le mot
-		mine: 3000,				// Temps avant d'améliorer les mines
-		upgrade: 4500,			// Temps avant d'améliorer le firewall
-		broke: 7000,			// Temps avant de réessayer de hacker si monnaie insuffisante
-		hack: 1500,				// Temps avant de hacker un autre joueur
+		word: 750,			// Temps avant de deviner le mot
+		mine: 5000,			// Temps avant d'améliorer les mines
+		upgrade: 3000,			// Temps avant d'améliorer le firewall
+		broke: 3000,			// Temps avant de réessayer de hacker si monnaie insuffisante
+		hack: 1000,			// Temps avant de hacker un autre joueur
 	},
 
 	playerToAttack: 0,			// Par quel joueur commencer l'attaque dans la liste (0 = 1er)
 	maxHackFails: 5,			// Nombre d'erreurs de hack avant de redémarrer le bot
 	maxMinerLevel: 30,			// Niveau max des mineurs sauf Botnet et Quantum server
-	maxQBLevel: 70,				// Niveau max des mineurs Botnet et Quantum server
-	maxUpgradeCost: .5,			// Somme maximale pour l'amélioration (BTC actuel * maxUpgradeCost)
+	maxQBLevel: 80,				// Niveau max des mineurs Botnet et Quantum server
+	maxUpgradeCost: .6,			// Somme maximale pour l'amélioration (BTC actuel * maxUpgradeCost)
 
 	// Paramètres de l'interface de contrôle du BOT
 	gui: {
 		enabled: true,
 		width: "400px",
 		height: "690px"
-	},
-
-	// Système de décryptage des images en texte
-	ocr: {
-		enabled: false,
-		url: "http://api.ocr.space/parse/image",
-		key: "XXX"
 	}
 };
 
@@ -58,11 +51,11 @@ vars = {
 	// Base de données des mots
 	listingB64: {"15311015":"module","19874074":"file","47175883":"encryptfile","78482505":"stat","98536489":"url","101243014":"eventlistdir","121093601":"password","130603323":"deleteallids","148244845":"rootcookieset","248513203":"loadaltevent","267308791":"info","348636898":"username","398561552":"add","401153668":"tempdatapass","419398556":"num","456062031":"point","514120436":"send","567102362":"data","589336711":"generate","599598412":"command","605282908":"loop","618676639":"ghostfilesystem","648763823":"create3axisvector","657256265":"cookies","668315514":"add","670312741":"writefile","782829474":"respondertimeout","847167870":"setnewproxy","854884272":"wordcounter","861244767":"joinnetworkclient","901243531":"newline","902745501":"changeusername","907181842":"syscall","938919465":"getxmlprotocol","968556280":"callmodule","974918423":"constructor","979066172":"signal","979636581":"global","985712586":"statusofprocess","1025302195":"anon","1036824887":"uploaduserstats","1059114713":"http","1116412930":"getping","1129543136":"load","1136257323":"handle","1144523139":"pass","1150909553":"package","1159860793":"sizeofhexagon","1171225457":"hostnewserver","1183279706":"listconfig","1207346080":"thread","1224854595":"datatype","1226991364":"setcookie","1277154470":"getid","1297084254":"fillgrid","1297139737":"loadbytes","1302383528":"host","1338515272":"getfirewallchannel","1346956584":"channelsetpackage","1372243801":"hostserver","1420184963":"event","1442699894":"responder","1472847174":"getfile","1557099499":"port","1567951055":"sizeof","1594121102":"serverproxy","1605981605":"removenewcookie","1609121367":"eventtype","1638349176":"gridheight","1647872193":"user","1653524095":"poly","1672574785":"log","1683542193":"val","1684232653":"status","1719618689":"root","1726234710":"patcheventlog","1733767903":"mysql","1768556497":"net","1770626869":"checkhttptype","1788506574":"delete","1852667296":"emitconfiglist","1856168944":"download","1882426025":"disconnectchannel","1905636872":"changepassword","1939344114":"urlcheck","1956925611":"fileexpresslog","1987315504":"length","1987630692":"encode","1999688087":"blockthreat","2044041787":"getdatapassword","2091854663":"join","2114328775":"bufferpingset","2127289026":"socket","2146605725":"create2axisvector","-2022313631":"get","-1626066211":"dir","-2118249843":"list","-2017827979":"ghost","-505734822":"ping","-105754243":"write","-596486220":"remove","-1411454256":"bytes","-1138367387":"count","-418857538":"reset","-1672823040":"com","-29353888":"key","-92886755":"buffer","-1616694298":"bit","-23912487":"size","-1249268365":"upload","-1468886921":"temp","-626053887":"system","-1156711839":"client","-81054603":"init","-141168411":"xml","-1345603115":"part","-679234549":"emit","-1587204252":"set","-1308065871":"call","-1266608331":"type","-193204407":"left","-1628499386":"right","-287565771":"domain","-1728017658":"intel","-1064389816":"getpass","-1164465758":"setstats","-1127904142":"encrypt","-406197419":"accountname","-945581080":"setnewid","-1222053453":"process","-508873827":"proxy","-1354700300":"filedir","-196679888":"newhost","-1461353192":"server","-683593749":"number","-836893237":"gridwidth","-2012064394":"decrypt","-294405445":"config","-39918655":"getinfo","-1476080363":"userport","-553981589":"account","-2131859196":"filetype","-700611194":"decryptfile","-179602858":"setport","-317210335":"threat","-1896953293":"userid","-689028013":"channel","-934078508":"hexagon","-222362882":"disconnect","-2047298844":"protocol","-487602046":"getkey","-32035591":"getlog","-900965004":"export","-1327076929":"connect","-517864587":"newserver","-440931039":"findpackage","-1172656994":"vector","-616163997":"response","-1986603776":"setping","-1941630950":"unpacktmpfile","-75721908":"getmysqldomain","-1695566202":"httpbuffersize","-819294973":"removeoldcookie","-2135624083":"getpartoffile","-410733505":"disconnectserver","-1100099911":"batchallfiles","-1008193379":"exportconfigpackage","-363307462":"loadloggedpassword","-841313941":"sendintelpass","-486089412":"decryptdatabatch","-414160473":"loadregisterlist","-1136603235":"systemgridtype","-1274291847":"encodenewfolder","-1758655872":"encryptunpackedbatch","-797896268":"destroybatch","-1293468912":"dodecahedron","-2089156425":"includedirectory","-1811003021":"systemportkey","-580269682":"mergesocket","-1898909613":"createnewpackage","-1505677585":"createfilethread","-745659096":"generatecodepack","-1279135495":"createnewsocket"},
 
-	balance: 0,					// BitCoins sur le compte
+	balance: 0,				// Initialisation des BitCoins sur le compte
 
 	flags: {
 		ocrBlock: false,		// Attente de la fin d'OCR
-		progressBlock: false	// Attente de la progression de la barre de hack
+		progressBlock: false		// Attente de la progression de la barre de hack
 	},
 
 	// Initialisation des événements de boucle
@@ -244,20 +237,11 @@ app = {
 					app.learn(word);
 					return;
 				}
-				if (config.ocr.enabled === true) {
-					log("* Not seen, trying OCR...");
-					app.doOCR(config.ocr.url, {
-						apikey: config.ocr.key,
-						language: "eng",
-						url: wordLink
-					});
-				} else {
-					log("* OCR disabled, skipping...");
-				}
 			});
 		} else {
 			log("Impossible de trouver le mot");
-			// if the target is disconnected and autoTarget disabled, re-enable it.
+			
+			// Si la cible est déconnecté et la cible automatique désactivée, on l'active
 			if ($("#cdm-text-container span:last").text() === "Target is disconnected from the Server." && !config.autoTarget) {
 				$("#custom-autoTarget-button").click();
 			}
@@ -274,32 +258,11 @@ app = {
 	submit: (word) => {
 		$("#tool-type-word").val(word);
 		$("#tool-type-word").submit();
-	},
-
-	doOCR: (link, payload) => {
-		vars.flags.ocrBlock = true;
-		// this is made somewhat generic to allow different ocr vendors
-		$.post(link, payload).done((data) => {
-			const word = String(data["ParsedResults"][0]["ParsedText"]).trim().toLowerCase().split(" ").join("");
-			if (word.length > 2) {
-				log(`. Got data: [${word}]`);
-				$("#tool-type-word").val(word);
-				app.learn(word);
-				vars.flags.ocrBlock = false;
-			} else {
-				log("* OCR failed");
-				app.restart();
-			}
-		});
 	}
 };
 
 loops = {
 	word: () => {
-		// block is true is we're mid-OCR
-		if (vars.flags.ocrBlock === true) {
-			return;
-		}
 		if ($("#targetmessage-input").is(":visible") === true) {
 
 			// Message envoyé après le hack
@@ -309,40 +272,51 @@ loops = {
 			app.restart();
 			return;
 		}
-		// if we're waiting on the progress bar to move...
+		
+		// On attends que la barre de progression bouge
 		if (vars.flags.progressBlock === true) {
 			const newHackProgress = parseHackProgress($("#progressbar-firewall-amount").attr("style"));
-			// check to see if it's new
+			
+			// On regarde si c'est un nouveau hack sinon bug
 			if (vars.hackProgress === newHackProgress) {
-				// the bar hasn't moved
-				log(">> La barre de progression semble figée...");
+				log("La barre de progression semble figée...");
 				vars.hackFails++;
+				
+				// Si trop de fails pour hack, on redémarre
 				if (vars.hackFails >= config.maxHackFails) {
 					vars.hackFails = 0;
 					log("La barre de progression est bloquée, redémarrage...");
-					// maybe the URLs have changed
+					
+					// Réinitialisation des URL (changement possible)
 					vars.listingURL = {};
 					app.restart();
 				}
 				return;
 			}
-			// the bar has moved
+			
+			// Quand la barre a bougée
 			vars.hackFails = 0;
 			vars.hackProgress = newHackProgress;
 			vars.flags.progressBlock = false;
 		}
-		// actually do the word stuff
+		
+		// Rechercher le mot
 		vars.flags.progressBlock = true;
 		app.findWord();
 	},
 
 	miner: () => {
+		
+		// Si le minage automatique est activé
 		if(config.minage) {
-			// first, get the status of our miners
+			
+			// Pou chaque mineur
 			for (const miner of vars.minerStatus) {
-				// set value
+				
+				// On récupère sa valeur
 				miner.value = parseInt($(`#${miner.name}-amount`).text());
-				// this is available to buy
+				
+				// Si son amélioration est possible
 				if ($(`#${miner.name}`).attr("style") === "opacity: 1;") {
 					// buy more quantum servers and botnets, buy botnets at the same rate as the quantum servers.
 					if (miner.value >= config.maxQBLevel) {
