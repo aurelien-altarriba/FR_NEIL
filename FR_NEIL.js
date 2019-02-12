@@ -13,7 +13,7 @@ let config, vars, app, loops, gui;
 config = {
 
 	// Message de hack pour la victime
-	message: "☠️ HACKED BY FR_NEIL 💻",
+	message: "☠️ HACKÉ PAR FR_NEIL 💻",
 
 	autoTarget: true,			// Attaque automatique
 	autoAttack: true,			// Cibles automatique
