@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name 			FR_NEIL
-// @version			2.4
+// @name 		FR_NEIL
+// @version		2.4
 // @description		BOT Autonome et contrôlable de hack et d'amélioration
-// @author 			Neïlérua
-// @match 			*://s0urce.io/*
+// @author 		Neïlérua
+// @match 		*://s0urce.io/*
 // ==/UserScript==
 
 // Initialisation des variables
@@ -17,15 +17,15 @@ config = {
 
 	autoTarget: true,			// Attaque automatique
 	autoAttack: true,			// Cibles automatique
-	log: false,					// Logs en console
+	log: false,				// Logs en console
 	minage: true,				// Amélioration des mineurs automatique
 
 	freq: {
-		word: 1000,				// Temps avant de deviner le mot
-		mine: 4000,				// Temps avant d'améliorer les mines
+		word: 1000,			// Temps avant de deviner le mot
+		mine: 4000,			// Temps avant d'améliorer les mines
 		upgrade: 3000,			// Temps avant d'améliorer le firewall
 		broke: 3000,			// Temps avant de réessayer de hacker si monnaie insuffisante
-		hack: 1000,				// Temps avant de hacker un autre joueur
+		hack: 1000,			// Temps avant de hacker un autre joueur
 	},
 
 	playerToAttack: 0,			// Par quel joueur commencer l'attaque dans la liste (0 = 1er)
