@@ -21,8 +21,8 @@ config = {
 	minage: true,				// Amélioration des mineurs automatique
 
 	freq: {
-		word: 750,			// Temps avant de deviner le mot
-		mine: 5000,			// Temps avant d'améliorer les mines
+		word: 1000,			// Temps avant de deviner le mot
+		mine: 4000,			// Temps avant d'améliorer les mines
 		upgrade: 3000,			// Temps avant d'améliorer le firewall
 		broke: 3000,			// Temps avant de réessayer de hacker si monnaie insuffisante
 		hack: 1000,			// Temps avant de hacker un autre joueur
