@@ -3,7 +3,7 @@
 // @version		2.4
 // @description		BOT Autonome et contrôlable de hack et d'amélioration
 // @author 		Aurélien Altarriba
-// @match 		*://s0urce.io/*
+// @match 		http://s0urce.io/*
 // ==/UserScript==
 
 // Initialisation des variables
