@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name 		FR_NEIL
-// @version		2.3
+// @name 			FR_NEIL
+// @version			2.4
 // @description		BOT Autonome et contrôlable de hack et d'amélioration
-// @author 		Neïlérua
-// @match 		*://s0urce.io/*
+// @author 			Neïlérua
+// @match 			*://s0urce.io/*
 // ==/UserScript==
 
 // Initialisation des variables
@@ -17,15 +17,15 @@ config = {
 
 	autoTarget: true,			// Attaque automatique
 	autoAttack: true,			// Cibles automatique
-	log: true,				// Logs en console
+	log: false,					// Logs en console
 	minage: true,				// Amélioration des mineurs automatique
 
 	freq: {
-		word: 1000,			// Temps avant de deviner le mot
-		mine: 4000,			// Temps avant d'améliorer les mines
+		word: 1000,				// Temps avant de deviner le mot
+		mine: 4000,				// Temps avant d'améliorer les mines
 		upgrade: 3000,			// Temps avant d'améliorer le firewall
 		broke: 3000,			// Temps avant de réessayer de hacker si monnaie insuffisante
-		hack: 1000,			// Temps avant de hacker un autre joueur
+		hack: 1000,				// Temps avant de hacker un autre joueur
 	},
 
 	playerToAttack: 0,			// Par quel joueur commencer l'attaque dans la liste (0 = 1er)
@@ -78,7 +78,7 @@ vars = {
 		{ name: "shop-quantum-server", value: 0 }
 	],
 
-	// Ports du pare-feu et autorisation d'amélioration
+	// Ports du firewall et autorisation d'amélioration
 	fireWall: [
 		{ name: "A", index: 1, needUpgrade: true },
 		{ name: "B", index: 2, needUpgrade: true },
@@ -116,6 +116,12 @@ app = {
 				gui.show();
 			}
 		}
+
+		// On ouvre le premier port firewall puis on le ferme après 200ms (pour éviter le bug de non-update)
+		$(`#window-firewall-part1`).click();
+		setTimeout(function() {
+			$("#window-firewall-pagebutton").click();
+		}, 200);
 
 		// Lancement des boucles d'actions du BOT
 		app.automate();
@@ -163,7 +169,7 @@ app = {
 			vars.loops.miner = setInterval(loops.miner, config.freq.mine);
 		}
 
-		// Démarre la boucle d'actions pour améliorer le pare-feu
+		// Démarre la boucle d'actions pour améliorer le firewall
 		if (vars.loops.upgrade === null) {
 			vars.loops.upgrade = setInterval(loops.upgrade, config.freq.upgrade);
 		}
@@ -310,7 +316,7 @@ loops = {
 		// Si le minage automatique est activé
 		if(config.minage) {
 			
-			// Pou chaque mineur
+			// Pour chaque mineur
 			for (const miner of vars.minerStatus) {
 				
 				// On récupère sa valeur
@@ -318,18 +324,21 @@ loops = {
 				
 				// Si son amélioration est possible
 				if ($(`#${miner.name}`).attr("style") === "opacity: 1;") {
-					// buy more quantum servers and botnets, buy botnets at the same rate as the quantum servers.
+
+					// Si le mineur est au dessus la configuration max, on arrête
 					if (miner.value >= config.maxQBLevel) {
-						// we're beyond or at the max QB level, no updates needed
 						continue;
 					}
-					// is this an advanced miner?
+					
+					// On récupère le type du mineur (base ou avancé)
 					const isAdvancedMiner = (miner.name === "shop-quantum-server" || miner.name === "shop-bot-net") ? true : false;
+
+					// Si le mineur n'est pas avancé, on arrête si son niveau est au dessus la limite
 					if (miner.value >= config.maxMinerLevel && isAdvancedMiner === false) {
-						// this isn't an advanced miner and it's beyond the max level, no updates needed
 						continue;
 					}
-					// we should buy this
+
+					// Sinon on améliore le mineur
 					$(`#${miner.name}`).click();
 				}
 			}
@@ -337,31 +346,33 @@ loops = {
 	},
 
 	upgrade: () => {
-		// leave if all firewalls are upgraded to max
+
+		// On quitte si tout les firewall sont déjà au max
 		if (!vars.fireWall[3].needUpgrade)
 			return;
-		// get a random firewall
-		// i refers to the location in the vars.firewall array
+		
+		// On choisi un des 3 firewall aléatoirement
 		const i = getRandomInt(0, 2);
-		// index refers to 1,2,3, the index in the DOM (use for selectors)
 		const index = vars.fireWall[i].index;
-		// if this fireWall is already fully upgraded, get an other random firewall.
-		if (!vars.fireWall[i].needUpgrade)
+
+		// Si ce firewall est déjà au maximum, on en choisi un autre aléatoirement
+		if (!vars.fireWall[i].needUpgrade) {
 			vars.loops.upgrade();
+		}
+
+		// On récupère notre montant d'argent
 		vars.balance = parseInt($("#window-my-coinamount").text());
 
-
-
-		// if the back button is visible, we're on a page, let's back out and hide the firewall warning.
+		// Si le bouton de retour est visible, on ferme le tutoriel
 		if ($("#window-firewall-pagebutton").is(":visible") === true) {
 			$("#tutorial-firewall").css("display", "none");
 			$("#window-firewall-pagebutton").click();
 		}
 
-		// click on the firewall
-		log(`. Handling upgrades to firewall ${vars.fireWall[i].name}`);
+		// On ouvre le firewall
 		$(`#window-firewall-part${index}`).click();
-		// get stats
+
+		// On récupère les niveaux d'amélioration du firewall
 		const stats = [
 			parseInt($("#shop-max-charges").text()), parseInt($("#shop-strength").text()), parseInt($("#shop-regen").text())
 		];
@@ -372,17 +383,27 @@ loops = {
 			30, 4, 10
 		];
 		let maxUpgradeCount = 0;
+
+		// Pour chaque stat
 		for (const stat in maxStats) {
+
+			// Si le stat n'est pas déjà au maximum
 			if (stats[stat] < maxStats[stat]) {
+
+				// Si on a assez d'argent
 				const statPrice = parseInt($(`#shop-firewall-${statLookup[stat]}-value`).text());
 				if (statPrice < (vars.balance * config.maxUpgradeCost)) {
-					log(`. Buying: ${$(".window-shop-element-info b").eq(stat).text()}`);
+
+					// Alors on améliore le firewall
+					log(`${vars.fireWall[i].name} - Amélioration : ${$(".window-shop-element-info b").eq(stat).text()}`);
 					$(`#shop-firewall-${statLookup[stat]}`).click();
-					// buy more than one upgrade, but only if they cost less than a third of the bitcoin balance.
-					// return;
 				}
+
+			// On incrément de 1 le maxUpgrade
 			} else {
 				maxUpgradeCount++;
+
+				// Si le firewall à ses 3 stats au max, on le retire de la liste d'amélioration
 				if (maxUpgradeCount === 3) {
 					vars.fireWall[i].needUpgrade = false;
 					if (vars.fireWall.every(checkFirewallsUpgrades))
@@ -390,7 +411,8 @@ loops = {
 				}
 			}
 		}
-		// let's go back
+
+		// On retourne au menu des firewalls
 		if ($("#window-firewall-pagebutton").is(":visible") === true) {
 			$("#window-firewall-pagebutton").click();
 		}
@@ -398,12 +420,14 @@ loops = {
 };
 
 gui = {
+
+	// Affiche l'interface du bot
 	show: () => {
 		const sizeCSS = `height: ${config.gui.height}; width: ${config.gui.width}; text-align: center;`;
 		const labelMap = {
 			word: "Vitesse des mots",
 			mine: "Amélioration des mines",
-			upgrade: "Amélioration du pare-feu",
+			upgrade: "Amélioration du firewall",
 			hack: "Temps entre les hacks"
 		};
 		const freqInput = (type) => {
@@ -450,11 +474,11 @@ gui = {
 					Améliorer les mineurs
 				</div>
 				<div id="custom-log-button" class="button" style="display: block; margin-bottom: 15px">
-					Afficher les logs
+					Afficher les logs en console
 				</div><br>
 				<span style="margin-bottom: 0.2em;">Message de hack:</span>
 				<br>
-				<input type="text" class="custom-gui-msg input-form" style="width:300px;height:30px;background:lightgrey;color:black;margin-top:0.3em;" value="${config.message}" >
+				<input type="text" class="custom-gui-msg input-form" maxlength="40" style="width:350px;height:30px;background:lightgrey;color:black;margin-top:0.3em;" value="${config.message}" >
 				<br><br>
 				${freqInput("word")}
 				${freqInput("mine")}
@@ -490,6 +514,7 @@ gui = {
 			$("#custom-gui").show();
 		});
 
+		// Si le navigateur n'ets pas Firefox, on bloque
 		if (navigator.userAgent.indexOf("Firefox")==-1)
 		{
 			log("⚠️ Agent autre que Firefox détecté !");
@@ -506,7 +531,6 @@ gui = {
 
 		// Masque le message d'AdBlock
 		$("#window-msg2 .message").html('<h1>🤖 BOT FR_NEIL - PAR NEÏLÉRUA</h1>');
-
 
 		// MINEURS
 		$("#window-miner .window-content").css("height", "500px");
@@ -534,12 +558,17 @@ gui = {
 			changementEffectue();
 		});
 
+		// Bouton redémarrer
 		$("#custom-restart-button").on("click", () => {
 			app.restart();
 		});
+
+		// Bouton arrêter
 		$("#custom-stop-button").on("click", () => {
 			app.stop();
 		});
+
+		// Bouton attaque automatique
 		$("#custom-autoAttack-button").on("click", () => {
 			config.autoAttack = !config.autoAttack;
 
@@ -551,36 +580,49 @@ gui = {
 			$("#custom-autoTarget-button").css("color", config.autoTarget ? "green" : "red");
 		});
 
+		// Bouton cible automatique
 		$("#custom-autoTarget-button").on("click", () => {
 			config.autoTarget = !config.autoTarget;
 			$("#custom-autoTarget-button").css("color", config.autoTarget ? "green" : "red");
 		});
+
+		// Bouton améliorer le firewall automatiquement
 		$("#custom-firewall-button").on("click", () => {
 			vars.fireWall[3].needUpgrade = !vars.fireWall[3].needUpgrade;
 			$("#custom-firewall-button").css("color", vars.fireWall[3].needUpgrade ? "green" : "red");
 		});
+
+		// Bouton améliorer le mineur automatiquement
 		$("#custom-mineur-button").on("click", () => {
 			config.minage = !config.minage;
 			$("#custom-mineur-button").css("color", config.minage ? "green" : "red");
 		});
+
+		// Bouton aficher les logs console automatiquement
 		$("#custom-log-button").on("click", () => {
 			config.log = !config.log;
 			$("#custom-log-button").css("color", config.log ? "green" : "red");
 		});
 
+		// Si on fait le bouton entrée sur un input de fréquence
 		$(".custom-gui-freq").on("keypress", (e) => {
 			if (e.keyCode !== 13) {
 				return;
 			}
+
+			// On récupère le type de fréquence
 			const type = $(e.target).attr("data-type");
 			if (!config.freq[type]) {
-				// invalid input, disregard i guess?
 				return;
 			}
+
+			// On met à jour la fréquence à sa nouvelle valeur
 			config.freq[type] = $(e.target).val();
-			log(`* Fréquence de '${type}' définie à ${config.freq[type]}`);
+			log(`Fréquence de '${type}' définie à ${config.freq[type]}`);
 			changementEffectue();
 		});
+
+		// Input de la position de départ à attaquer pour l'aléatoire (+ intervalle définie)
 		$("#positionAttaque").on("keypress", (e) => {
 			if (e.keyCode !== 13) {
 				return;
@@ -589,6 +631,8 @@ gui = {
 			log(`Position à attaquer : ${config.playerToAttack}`);
 			changementEffectue();
 		});
+
+		// Input du niveau max du mineur de base
 		$("#limitSmallMiner").on("keypress", (e) => {
 			if (e.keyCode !== 13) {
 				return;
@@ -597,6 +641,8 @@ gui = {
 			log(`Limite des petits mineurs : ${config.maxMinerLevel}`);
 			changementEffectue();
 		});
+
+		// Input du niveau max du mineur avancé
 		$("#limitBigMiner").on("keypress", (e) => {
 			if (e.keyCode !== 13) {
 				return;
@@ -606,7 +652,7 @@ gui = {
 			changementEffectue();
 		});
 
-		// make the bot window draggable
+		// Rend la fenêtre déplaçable
 		const botWindow = ("#custom-gui");
 		const botWindowTitle = ("#custom-gui-bot-title");
 		$(document).on("mousedown", botWindowTitle, (e) => {
@@ -626,23 +672,39 @@ gui = {
 	}
 };
 
+// Vérifie le niveau du firewall
 function checkFirewallsUpgrades(FW, index) {
-	if (index === 3)
+	if (index === 3) {
 		return true;
+	}
 	return FW.needUpgrade === false;
 }
 
+// Calcule la progression de la barre
 function parseHackProgress(progress) {
-	// remove the %;
 	const newProgress = progress.slice(0, -2);
 	const newProgressParts = newProgress.split("width: ");
 	return parseInt(newProgressParts.pop());
 }
 
+// Renvoi un nombre entier aléatoire dans l'intervalle choisie
 function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+// Récupère l'URL du mot
+function toDataURL(url) {
+	return fetch(url)
+		.then(response => response.blob())
+		.then(blob => new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onloadend = () => resolve(reader.result);
+			reader.onerror = reject;
+			reader.readAsDataURL(blob);
+		}));
+}
+
+// Décode l'URL du mot
 function getHashCode(data) {
 	let hash = 0;
 	if (data.length === 0) {
@@ -656,23 +718,14 @@ function getHashCode(data) {
 	return hash.toString();
 }
 
-function toDataURL(url) {
-	return fetch(url)
-		.then(response => response.blob())
-		.then(blob => new Promise((resolve, reject) => {
-			const reader = new FileReader();
-			reader.onloadend = () => resolve(reader.result);
-			reader.onerror = reject;
-			reader.readAsDataURL(blob);
-		}));
-}
-
+// Détecte si on est sur un input
 function isFromEdit(e) {
 	if (window.event) e = window.event;
 	var target = e.target ? e.target : e.srcElement;
 	return ((target.tagName=="INPUT" && (target.type == "text" || target.type == "password")) || target.tagName=="TEXTAREA");
 }
 
+// Bloque le bouton Suppr sauf dans les inputs
 function blocBadTouche(e) {
 	if (window.event) e = window.event;
 	var touche = window.event ? e.keyCode : e.which;
@@ -684,6 +737,7 @@ function blocBadTouche(e) {
 	return true;
 }
 
+// Log en console
 function log(message) {
 	if(config.log) {
 		console.log(`:: ${message}`);
@@ -708,5 +762,6 @@ $("body").on("keydown", function(event) {
 	return blocBadTouche(event);
 });
 
+// Lancement du bot
 console.clear();
 app.start();
