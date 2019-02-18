@@ -17,22 +17,22 @@ config = {
 
 	autoTarget: true,			// Attaque automatique
 	autoAttack: true,			// Cibles automatique
-	log: false,				// Logs en console
-	minage: true,				// Amélioration des mineurs automatique
-
+	log: false,						// Logs en console
+	minage: true,					// Amélioration des mineurs automatique
+	
 	freq: {
-		word: 1000,			// Temps avant de deviner le mot
-		mine: 4000,			// Temps avant d'améliorer les mines
+		word: 1000,					// Temps avant de deviner le mot
+		mine: 4000,					// Temps avant d'améliorer les mines
 		upgrade: 3000,			// Temps avant d'améliorer le firewall
-		broke: 3000,			// Temps avant de réessayer de hacker si monnaie insuffisante
-		hack: 1000,			// Temps avant de hacker un autre joueur
+		broke: 3000,				// Temps avant de réessayer de hacker si monnaie insuffisante
+		hack: 1000,					// Temps avant de hacker un autre joueur
 	},
 
-	playerToAttack: 0,			// Par quel joueur commencer l'attaque dans la liste (0 = 1er)
+	playerToAttack: 0,		// Par quel joueur commencer l'attaque dans la liste (0 = 1er)
 	maxHackFails: 5,			// Nombre d'erreurs de hack avant de redémarrer le bot
-	maxMinerLevel: 30,			// Niveau max des mineurs sauf Botnet et Quantum server
+	maxMinerLevel: 30,		// Niveau max des mineurs sauf Botnet et Quantum server
 	maxQBLevel: 80,				// Niveau max des mineurs Botnet et Quantum server
-	maxUpgradeCost: .6,			// Somme maximale pour l'amélioration (BTC actuel * maxUpgradeCost)
+	maxUpgradeCost: .6,		// Somme maximale pour l'amélioration (BTC actuel * maxUpgradeCost)
 
 	// Paramètres de l'interface de contrôle du BOT
 	gui: {
