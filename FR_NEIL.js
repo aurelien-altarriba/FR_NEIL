@@ -19,7 +19,7 @@ config = {
 	autoAttack: true,			// Cibles automatique
 	log: false,						// Logs en console
 	minage: true,					// Amélioration des mineurs automatique
-	
+
 	freq: {
 		word: 1000,					// Temps avant de deviner le mot
 		mine: 4000,					// Temps avant d'améliorer les mines
@@ -181,15 +181,16 @@ app = {
 		// Cible automatique pour l'attaque
 		if (config.autoTarget) {
 
-			// Choisi aléatoirement un joueur entre la position choisie sur la liste et les 5 suivants
-			const rndTarget = getRandomInt(config.playerToAttack, config.playerToAttack + 5);
+			// Sélectionne un joueur aléatoirement dans la liste
+			const nbListe = $("#player-list").children().length - 1;
+			const randomListe = getRandomInt(0, nbListe);
 
 			// Récupération du nom du joueur ciblé
-			const targetName = $("#player-list").children("tr").eq(rndTarget)[0].innerText;
+			const targetName = $("#player-list").children("tr").eq(randomListe)[0].innerText;
 			log(`=> Attaque de : ${targetName}`);
 
 			// Ouverture du menu pour hacker le joueur
-			$("#player-list").children("tr").eq(rndTarget)[0].click();
+			$("#player-list").children("tr").eq(randomListe)[0].click();
 			$("#window-other-button").click();
 		}
 
@@ -462,9 +463,6 @@ gui = {
 				<div id="custom-autoTarget-button" class="button" style="display: block; margin-bottom: 15px";>
 					Cibles aléatoires
 				</div>
-				<span style="margin-left:15px;">Position de départ:</span>
-				<input type="text" id="positionAttaque" class="custom-gui-freq input-form" style="width:30px;margin:0px 0px 15px 5px;background:#444;"
-				  value="${config.playerToAttack + 1}" >
 				<div style="width:100%;border-bottom: 1px solid grey;"></div>
 
 				<div id="custom-firewall-button" class="button" style="display: block; margin-bottom: 15px; margin-top: 15px;">
@@ -619,16 +617,6 @@ gui = {
 			// On met à jour la fréquence à sa nouvelle valeur
 			config.freq[type] = $(e.target).val();
 			log(`Fréquence de '${type}' définie à ${config.freq[type]}`);
-			changementEffectue();
-		});
-
-		// Input de la position de départ à attaquer pour l'aléatoire (+ intervalle définie)
-		$("#positionAttaque").on("keypress", (e) => {
-			if (e.keyCode !== 13) {
-				return;
-			}
-			config.playerToAttack = $(e.target).val() - 1;
-			log(`Position à attaquer : ${config.playerToAttack}`);
 			changementEffectue();
 		});
 
