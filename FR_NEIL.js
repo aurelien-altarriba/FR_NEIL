@@ -28,6 +28,7 @@ config = {
 		hack: 1000,					// Temps avant de hacker un autre joueur
 	},
 
+	portToAttack: 0,			// Port sur lequel attaquer le joueur (0 = random)
 	playerToAttack: 0,		// Par quel joueur commencer l'attaque dans la liste (0 = 1er)
 	maxHackFails: 5,			// Nombre d'erreurs de hack avant de redémarrer le bot
 	maxMinerLevel: 30,		// Niveau max des mineurs sauf Botnet et Quantum server
@@ -38,7 +39,7 @@ config = {
 	gui: {
 		enabled: true,
 		width: "400px",
-		height: "690px"
+		height: "700px"
 	}
 };
 
@@ -197,8 +198,14 @@ app = {
 		// Attaque automatique
 		if (config.autoAttack) {
 
-			// Choisi un port aléatoirement pour attaquer
-			const portNumber = getRandomInt(1, 3);
+			var portNumber = config.portToAttack;
+
+			// Si port aléatoire, on le sélectionne aléatoirement
+			if (portNumber == 0) {
+				portNumber = getRandomInt(1, 3);
+			}
+
+			log(`> Port visé : ${portNumber}`);
 
 			// Vérifie si assez de BitCoins sur le compte pour hack, sinon attends
 			const portStyle = $(`#window-other-port${portNumber}`).attr("style");
@@ -451,21 +458,36 @@ gui = {
 				<div id="custom-restart-button" class="button" style="display: block; margin-bottom: 15px">
 					Redémarrer le bot
 				</div>
-				<div id="custom-stop-button" class="button" style="display: block; margin-bottom: 15px;">
+				<div id="custom-stop-button" class="button" style="display: block; margin-bottom: 15px">
 					Arrêter le bot
 				</div>
 
-				<div style="width:100%;border-bottom: 1px solid grey;"></div>
+				<div style="width:100%;border-bottom: 1px solid grey"></div>
 				<h3 style="text-align:center;">ATTAQUES</h3>
-				<div id="custom-autoAttack-button" class="button" style="display: block; margin-bottom: 15px";>
+				<div id="custom-autoAttack-button" class="button" style="display: block; margin-bottom: 15px">
 					Attaques automatiques sur la cible
 				</div>
-				<div id="custom-autoTarget-button" class="button" style="display: block; margin-bottom: 15px";>
+				<div id="custom-autoTarget-button" class="button" style="display: block; margin-bottom: 15px">
 					Cibles aléatoires
+				</div>
+				<div style="display:flex;justify-content:space-around;align-items:center;">
+					<h4 style="text-align:center;">Port :</h4>
+					<div id="port-random-button" class="button" style="display: block">
+						Aléatoire
+					</div>
+					<div id="port-A-button" class="button" style="display: block">
+						A
+					</div>
+					<div id="port-B-button" class="button" style="display: block">
+						B
+					</div>
+					<div id="port-C-button" class="button" style="display: block">
+						C
+					</div>
 				</div>
 				<div style="width:100%;border-bottom: 1px solid grey;"></div>
 
-				<div id="custom-firewall-button" class="button" style="display: block; margin-bottom: 15px; margin-top: 15px;">
+				<div id="custom-firewall-button" class="button" style="display: block; margin-bottom: 15px; margin-top: 15px">
 					Améliorer le firewall
 				</div>
 				<div id="custom-mineur-button" class="button" style="display: block; margin-bottom: 15px">
@@ -476,7 +498,7 @@ gui = {
 				</div><br>
 				<span style="margin-bottom: 0.2em;">Message de hack:</span>
 				<br>
-				<input type="text" class="custom-gui-msg input-form" maxlength="40" style="width:350px;height:30px;background:lightgrey;color:black;margin-top:0.3em;" value="${config.message}" >
+				<input type="text" class="custom-gui-msg input-form" maxlength="40" style="width:350px;height:30px;background:lightgrey;color:black;margin-top:0.3em" value="${config.message}" >
 				<br><br>
 				${freqInput("word")}
 				${freqInput("mine")}
@@ -496,10 +518,10 @@ gui = {
 		const limitesMineurs = `
 		<div style="text-align:center;">
 			<span>MAX mineurs de base : </span>
-			<input type="text" id="limitSmallMiner" class="input-form" style="width:40px;margin:15px 0px 15px 5px;background:#444;"
+			<input type="text" id="limitSmallMiner" class="input-form" style="width:40px;margin:15px 0px 15px 5px;background:#444"
 			  value="${config.maxMinerLevel}" ><br>
 			<span>MAX mineurs avancés : </span>
-			<input type="text" id="limitBigMiner" class="input-form" style="width:40px;margin:0px 0px 15px 5px;background:#444;"
+			<input type="text" id="limitBigMiner" class="input-form" style="width:40px;margin:0px 0px 15px 5px;background:#444"
 			  value="${config.maxQBLevel}" >
 		</div>
 		`;
@@ -540,6 +562,12 @@ gui = {
 		$("#custom-firewall-button").css("color", vars.fireWall[3].needUpgrade ? "green" : "red");
 		$("#custom-mineur-button").css("color", config.minage ? "green" : "red");
 		$("#custom-log-button").css("color", config.log ? "green" : "red");
+		$("#port-random-button").css("color", config.portToAttack ? "red" : "green");
+
+		// Initialisation couleurs boutons ports
+		$("#port-A-button").css("color", "red");
+		$("#port-B-button").css("color", "red");
+		$("#port-C-button").css("color", "red");
 
 		// Fermeture de la fenêtre du BOT
 		$("#custom-gui-bot-title > span.window-close-style").on("click", () => {
@@ -584,6 +612,34 @@ gui = {
 			$("#custom-autoTarget-button").css("color", config.autoTarget ? "green" : "red");
 		});
 
+		// Bouton port automatique
+		$("#port-random-button").on("click", () => {
+			config.portToAttack = 0;
+			resetPorts();
+			$("#port-random-button").css("color", "green");
+		});
+
+		// Bouton port A
+		$("#port-A-button").on("click", () => {
+			config.portToAttack = 1;
+			resetPorts();
+			$("#port-A-button").css("color", "green");
+		});
+
+		// Bouton port B
+		$("#port-B-button").on("click", () => {
+			config.portToAttack = 2;
+			resetPorts();
+			$("#port-B-button").css("color", "green");
+		});
+
+		// Bouton port C
+		$("#port-C-button").on("click", () => {
+			config.portToAttack = 3;
+			resetPorts();
+			$("#port-C-button").css("color", "green");
+		});
+
 		// Bouton améliorer le firewall automatiquement
 		$("#custom-firewall-button").on("click", () => {
 			vars.fireWall[3].needUpgrade = !vars.fireWall[3].needUpgrade;
@@ -596,7 +652,7 @@ gui = {
 			$("#custom-mineur-button").css("color", config.minage ? "green" : "red");
 		});
 
-		// Bouton aficher les logs console automatiquement
+		// Bouton afficher les logs console automatiquement
 		$("#custom-log-button").on("click", () => {
 			config.log = !config.log;
 			$("#custom-log-button").css("color", config.log ? "green" : "red");
@@ -743,6 +799,13 @@ function changementEffectue() {
 			$("#custom-gui").css("transition", "none");
 		}, 500);
 	}, 500);
+}
+
+function resetPorts() {
+	$("#port-random-button").css("color", "red");
+	$("#port-A-button").css("color", "red");
+	$("#port-B-button").css("color", "red");
+	$("#port-C-button").css("color", "red");
 }
 
 // Pour empêcher le retour de page avec le bouton supprimer
