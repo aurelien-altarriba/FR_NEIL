@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name 		FR_NEIL
-// @version		2.4
+// @name					FR_NEIL
+// @version				2.4
 // @description		BOT Autonome et contrôlable de hack et d'amélioration
-// @author 		Aurélien Altarriba
-// @match 		http://s0urce.io/*
+// @author 				Aurélien Altarriba
+// @match 				http://s0urce.io/*
 // ==/UserScript==
 
 // Initialisation des variables
@@ -246,7 +246,7 @@ app = {
 			});
 		} else {
 			log("Impossible de trouver le mot");
-			
+
 			// Si la cible est déconnecté et la cible automatique désactivée, on l'active
 			if ($("#cdm-text-container span:last").text() === "Target is disconnected from the Server." && !config.autoTarget) {
 				$("#custom-autoTarget-button").click();
@@ -278,50 +278,50 @@ loops = {
 			app.restart();
 			return;
 		}
-		
+
 		// On attends que la barre de progression bouge
 		if (vars.flags.progressBlock === true) {
 			const newHackProgress = parseHackProgress($("#progressbar-firewall-amount").attr("style"));
-			
+
 			// On regarde si c'est un nouveau hack sinon bug
 			if (vars.hackProgress === newHackProgress) {
 				log("La barre de progression semble figée...");
 				vars.hackFails++;
-				
+
 				// Si trop de fails pour hack, on redémarre
 				if (vars.hackFails >= config.maxHackFails) {
 					vars.hackFails = 0;
 					log("La barre de progression est bloquée, redémarrage...");
-					
+
 					// Réinitialisation des URL (changement possible)
 					vars.listingURL = {};
 					app.restart();
 				}
 				return;
 			}
-			
+
 			// Quand la barre a bougée
 			vars.hackFails = 0;
 			vars.hackProgress = newHackProgress;
 			vars.flags.progressBlock = false;
 		}
-		
+
 		// Rechercher le mot
 		vars.flags.progressBlock = true;
 		app.findWord();
 	},
 
 	miner: () => {
-		
+
 		// Si le minage automatique est activé
 		if(config.minage) {
-			
+
 			// Pour chaque mineur
 			for (const miner of vars.minerStatus) {
-				
+
 				// On récupère sa valeur
 				miner.value = parseInt($(`#${miner.name}-amount`).text());
-				
+
 				// Si son amélioration est possible
 				if ($(`#${miner.name}`).attr("style") === "opacity: 1;") {
 
@@ -329,7 +329,7 @@ loops = {
 					if (miner.value >= config.maxQBLevel) {
 						continue;
 					}
-					
+
 					// On récupère le type du mineur (base ou avancé)
 					const isAdvancedMiner = (miner.name === "shop-quantum-server" || miner.name === "shop-bot-net") ? true : false;
 
@@ -350,7 +350,7 @@ loops = {
 		// On quitte si tout les firewall sont déjà au max
 		if (!vars.fireWall[3].needUpgrade)
 			return;
-		
+
 		// On choisi un des 3 firewall aléatoirement
 		const i = getRandomInt(0, 2);
 		const index = vars.fireWall[i].index;
