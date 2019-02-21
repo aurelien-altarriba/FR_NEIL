@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name					FR_NEIL
-// @version				2.4
+// @version				2.5
 // @description		BOT Autonome et contrôlable de hack et d'amélioration
 // @author 				Aurélien Altarriba
 // @match 				http://s0urce.io/*
@@ -36,11 +36,18 @@ config = {
 	maxUpgradeCost: .6,		// Somme maximale pour l'amélioration (BTC actuel * maxUpgradeCost)
 
 	// Paramètres de l'interface de contrôle du BOT
-	gui: {
+	guiBot: {
 		enabled: true,
 		width: "400px",
 		height: "700px"
-	}
+	},
+
+	// Paramètres de l'interface de la whitelist
+	guiWhitelist: {
+		enabled: true,
+		width: "400px",
+		height: "400px"
+	},
 };
 
 // VARIABLES
@@ -51,6 +58,9 @@ vars = {
 
 	// Base de données des mots
 	listingB64: {"15311015":"module","19874074":"file","47175883":"encryptfile","78482505":"stat","98536489":"url","101243014":"eventlistdir","121093601":"password","130603323":"deleteallids","148244845":"rootcookieset","248513203":"loadaltevent","267308791":"info","348636898":"username","398561552":"add","401153668":"tempdatapass","419398556":"num","456062031":"point","514120436":"send","567102362":"data","589336711":"generate","599598412":"command","605282908":"loop","618676639":"ghostfilesystem","648763823":"create3axisvector","657256265":"cookies","668315514":"add","670312741":"writefile","782829474":"respondertimeout","847167870":"setnewproxy","854884272":"wordcounter","861244767":"joinnetworkclient","901243531":"newline","902745501":"changeusername","907181842":"syscall","938919465":"getxmlprotocol","968556280":"callmodule","974918423":"constructor","979066172":"signal","979636581":"global","985712586":"statusofprocess","1025302195":"anon","1036824887":"uploaduserstats","1059114713":"http","1116412930":"getping","1129543136":"load","1136257323":"handle","1144523139":"pass","1150909553":"package","1159860793":"sizeofhexagon","1171225457":"hostnewserver","1183279706":"listconfig","1207346080":"thread","1224854595":"datatype","1226991364":"setcookie","1277154470":"getid","1297084254":"fillgrid","1297139737":"loadbytes","1302383528":"host","1338515272":"getfirewallchannel","1346956584":"channelsetpackage","1372243801":"hostserver","1420184963":"event","1442699894":"responder","1472847174":"getfile","1557099499":"port","1567951055":"sizeof","1594121102":"serverproxy","1605981605":"removenewcookie","1609121367":"eventtype","1638349176":"gridheight","1647872193":"user","1653524095":"poly","1672574785":"log","1683542193":"val","1684232653":"status","1719618689":"root","1726234710":"patcheventlog","1733767903":"mysql","1768556497":"net","1770626869":"checkhttptype","1788506574":"delete","1852667296":"emitconfiglist","1856168944":"download","1882426025":"disconnectchannel","1905636872":"changepassword","1939344114":"urlcheck","1956925611":"fileexpresslog","1987315504":"length","1987630692":"encode","1999688087":"blockthreat","2044041787":"getdatapassword","2091854663":"join","2114328775":"bufferpingset","2127289026":"socket","2146605725":"create2axisvector","-2022313631":"get","-1626066211":"dir","-2118249843":"list","-2017827979":"ghost","-505734822":"ping","-105754243":"write","-596486220":"remove","-1411454256":"bytes","-1138367387":"count","-418857538":"reset","-1672823040":"com","-29353888":"key","-92886755":"buffer","-1616694298":"bit","-23912487":"size","-1249268365":"upload","-1468886921":"temp","-626053887":"system","-1156711839":"client","-81054603":"init","-141168411":"xml","-1345603115":"part","-679234549":"emit","-1587204252":"set","-1308065871":"call","-1266608331":"type","-193204407":"left","-1628499386":"right","-287565771":"domain","-1728017658":"intel","-1064389816":"getpass","-1164465758":"setstats","-1127904142":"encrypt","-406197419":"accountname","-945581080":"setnewid","-1222053453":"process","-508873827":"proxy","-1354700300":"filedir","-196679888":"newhost","-1461353192":"server","-683593749":"number","-836893237":"gridwidth","-2012064394":"decrypt","-294405445":"config","-39918655":"getinfo","-1476080363":"userport","-553981589":"account","-2131859196":"filetype","-700611194":"decryptfile","-179602858":"setport","-317210335":"threat","-1896953293":"userid","-689028013":"channel","-934078508":"hexagon","-222362882":"disconnect","-2047298844":"protocol","-487602046":"getkey","-32035591":"getlog","-900965004":"export","-1327076929":"connect","-517864587":"newserver","-440931039":"findpackage","-1172656994":"vector","-616163997":"response","-1986603776":"setping","-1941630950":"unpacktmpfile","-75721908":"getmysqldomain","-1695566202":"httpbuffersize","-819294973":"removeoldcookie","-2135624083":"getpartoffile","-410733505":"disconnectserver","-1100099911":"batchallfiles","-1008193379":"exportconfigpackage","-363307462":"loadloggedpassword","-841313941":"sendintelpass","-486089412":"decryptdatabatch","-414160473":"loadregisterlist","-1136603235":"systemgridtype","-1274291847":"encodenewfolder","-1758655872":"encryptunpackedbatch","-797896268":"destroybatch","-1293468912":"dodecahedron","-2089156425":"includedirectory","-1811003021":"systemportkey","-580269682":"mergesocket","-1898909613":"createnewpackage","-1505677585":"createfilethread","-745659096":"generatecodepack","-1279135495":"createnewsocket"},
+
+	// Tableau des pseudos de la whitelist
+	listePseudos: [],
 
 	balance: 0,				// Initialisation des BitCoins sur le compte
 
@@ -88,7 +98,13 @@ vars = {
 	],
 
 	// Initialisation système pour la fenêtre de contrôle du BOT
-	gui: {
+	guiBot: {
+		dragReady: false,
+		dragOffset: { x: 0, y: 0 }
+	},
+
+	// Initialisation système pour la fenêtre de la whitelist
+	guiWhitelist: {
 		dragReady: false,
 		dragOffset: { x: 0, y: 0 }
 	}
@@ -110,9 +126,9 @@ app = {
 		if ($("#window-computer").is(":visible") === false) {
 			$("#desktop-computer").children("img").click();
 		}
-		if (config.gui.enabled === true) {
-			if ($("#custom-gui").length > 0) {
-				$("#custom-gui").show();
+		if (config.guiBot.enabled === true) {
+			if ($("#bot-gui").length > 0) {
+				$("#bot-gui").show();
 			} else {
 				gui.show();
 			}
@@ -182,13 +198,18 @@ app = {
 		// Cible automatique pour l'attaque
 		if (config.autoTarget) {
 
-			// Sélectionne un joueur aléatoirement dans la liste
+			// On récupère la taille de la liste
 			const nbListe = $("#player-list").children().length - 1;
-			const randomListe = getRandomInt(0, nbListe);
+			var randomListe = 0;
+			var pseudoJoueur = "Aucun";
 
-			// Récupération du nom du joueur ciblé
-			const targetName = $("#player-list").children("tr").eq(randomListe)[0].innerText;
-			log(`=> Attaque de : ${targetName}`);
+			// Tant que le joueur pris aléatoirement est dans la whitelist, on recommence
+			do {
+				randomListe = getRandomInt(0, nbListe);
+				pseudoJoueur = $("#player-list").children("tr").eq(randomListe)[0].children[1].innerText;
+			} while ($.inArray(pseudoJoueur, vars.listePseudos) != -1);
+
+			log(`=> Attaque de : ${pseudoJoueur}`);
 
 			// Ouverture du menu pour hacker le joueur
 			$("#player-list").children("tr").eq(randomListe)[0].click();
@@ -257,7 +278,7 @@ app = {
 
 			// Si la cible est déconnecté et la cible automatique désactivée, on l'active
 			if ($("#cdm-text-container span:last").text() === "Target is disconnected from the Server." && !config.autoTarget) {
-				$("#custom-autoTarget-button").click();
+				$("#bot-autoTarget-button").click();
 			}
 			app.restart();
 		}
@@ -431,43 +452,48 @@ gui = {
 
 	// Affiche l'interface du bot
 	show: () => {
-		const sizeCSS = `height: ${config.gui.height}; width: ${config.gui.width}; text-align: center;`;
+		const sizeCSSBot = `height: ${config.guiBot.height}; width: ${config.guiBot.width}; text-align: center;`;
+		const sizeCSSWhitelist = `height: ${config.guiWhitelist.height}; width: ${config.guiWhitelist.width}; text-align: center;`;
+
 		const labelMap = {
 			word: "Vitesse des mots",
 			mine: "Amélioration des mines",
 			upgrade: "Amélioration du firewall",
 			hack: "Temps entre les hacks"
 		};
+
 		const freqInput = (type) => {
 			return `<span style="font-size:15px">
 				${labelMap[type]}:
-				<input type="text" class="custom-gui-freq input-form" style="width:50px;margin:0px 0px 15px 5px;background:#444;"
+				<input type="text" class="bot-gui-freq input-form" style="width:50px;margin:0px 0px 15px 5px;background:#444;"
 				  value="${config.freq[type]}" data-type="${type}">
 				<span>(ms)</span><br>
 			</span>`;
 		};
+
+		// Fenêtre d'interface du bot
 		const botWindowHTML = `
-		<div id="custom-gui" class="window" style="border-color: rgb(62, 76, 95); color: rgb(191, 207, 210); ${sizeCSS} z-index: 10; top: 10%; right: 7%;">
-			<div id="custom-gui-bot-title" class="window-title" style="background-color: rgb(62, 76, 95);">
+		<div id="bot-gui" class="window" style="border-color: rgb(62, 76, 95); color: rgb(191, 207, 210); ${sizeCSSBot} z-index: 10; top: 10%; right: 7%;">
+			<div id="bot-gui-bot-title" class="window-title" style="background-color: rgb(62, 76, 95);">
 				🤖 BOT FR_NEIL
 				<span class="window-close-style">
 					<img class="window-close-img" src="http://s0urce.io/client/img/icon-close.png">
 				</span>
 			</div>
-			<div class="window-content" style="${sizeCSS}">
-				<div id="custom-restart-button" class="button" style="display: block; margin-bottom: 15px">
+			<div class="window-content" style="${sizeCSSBot}">
+				<div id="bot-restart-button" class="button" style="display: block; margin-bottom: 15px">
 					Redémarrer le bot
 				</div>
-				<div id="custom-stop-button" class="button" style="display: block; margin-bottom: 15px">
+				<div id="bot-stop-button" class="button" style="display: block; margin-bottom: 15px">
 					Arrêter le bot
 				</div>
 
 				<div style="width:100%;border-bottom: 1px solid grey"></div>
 				<h3 style="text-align:center;">ATTAQUES</h3>
-				<div id="custom-autoAttack-button" class="button" style="display: block; margin-bottom: 15px">
+				<div id="bot-autoAttack-button" class="button" style="display: block; margin-bottom: 15px">
 					Attaques automatiques sur la cible
 				</div>
-				<div id="custom-autoTarget-button" class="button" style="display: block; margin-bottom: 15px">
+				<div id="bot-autoTarget-button" class="button" style="display: block; margin-bottom: 15px">
 					Cibles aléatoires
 				</div>
 				<div style="display:flex;justify-content:space-around;align-items:center;">
@@ -487,18 +513,18 @@ gui = {
 				</div>
 				<div style="width:100%;border-bottom: 1px solid grey;"></div>
 
-				<div id="custom-firewall-button" class="button" style="display: block; margin-bottom: 15px; margin-top: 15px">
+				<div id="bot-firewall-button" class="button" style="display: block; margin-bottom: 15px; margin-top: 15px">
 					Améliorer le firewall
 				</div>
-				<div id="custom-mineur-button" class="button" style="display: block; margin-bottom: 15px">
+				<div id="bot-mineur-button" class="button" style="display: block; margin-bottom: 15px">
 					Améliorer les mineurs
 				</div>
-				<div id="custom-log-button" class="button" style="display: block; margin-bottom: 15px">
+				<div id="bot-log-button" class="button" style="display: block; margin-bottom: 15px">
 					Afficher les logs en console
 				</div><br>
 				<span style="margin-bottom: 0.2em;">Message de hack:</span>
 				<br>
-				<input type="text" class="custom-gui-msg input-form" maxlength="40" style="width:350px;height:30px;background:lightgrey;color:black;margin-top:0.3em" value="${config.message}" >
+				<input type="text" class="bot-gui-msg input-form" maxlength="40" style="width:350px;height:30px;background:lightgrey;color:black;margin-top:0.3em" value="${config.message}" >
 				<br><br>
 				${freqInput("word")}
 				${freqInput("mine")}
@@ -507,10 +533,38 @@ gui = {
 			</div>
 		</div>`;
 
+		// Fenêtre de la whitelist
+		const whitelistWindowHTML = `
+		<div id="whitelist-gui" class="window" style="bottom:10px; border-color: rgb(62, 76, 95); color: rgb(191, 207, 210); ${sizeCSSWhitelist} z-index: 10; top: 10%; right: 7%;">
+			<div id="whitelist-gui-whitelist-title" class="window-title" style="background-color: rgb(62, 76, 95);">
+				📝 Whitelist
+				<span class="window-close-style">
+					<img class="window-close-img" src="http://s0urce.io/client/img/icon-close.png">
+				</span>
+			</div>
+			<div class="window-content" style="${sizeCSSWhitelist}">
+				<div style="display: flex; align-items: center; margin-bottom: 0.5em;">
+		      <input type="text" id="inputWhitelist" class="input-form" maxlength="12" style="width:100%;height:30px;background:lightgrey;color:black;margin:0" placeholder="Entrez un pseudo">
+		      <button id="btAddWhitelist" class="button" type="button" style="height:30px;margin-left:0.4em;">Ajouter</button>
+		    </div>
+				<div id="listePseudosWhitelist" style="display:flex; flex-wrap: wrap;max-height:300px;overflow-y:auto;">
+		    </div>
+			</div>
+		</div>`;
+
+		// Bouton d'ouverture de la fenêtre du bot
 		const boutonBOT = `
 		<div class="desktop-element" id="desktop-bot" style="position: absolute; top: 85px; right: 0">
 			<div style="font-size: 2em;">🤖</div>
 			<div class="desktop-element-title">BOT</div>
+		</div>
+		`;
+
+		// Bouton d'ouverture de la fenêtre de la whitelist
+		const boutonWhitelist = `
+		<div class="desktop-element" id="desktop-whitelist" style="position: absolute; top: 170px; right: 0">
+			<div style="font-size: 2em;">📝</div>
+			<div class="desktop-element-title">Whitelist</div>
 		</div>
 		`;
 
@@ -526,12 +580,33 @@ gui = {
 		</div>
 		`;
 
+		// Ajout des fenêtres à la page
 		$(".window-wrapper").append(botWindowHTML);
+		$(".window-wrapper").append(whitelistWindowHTML);
+
+		// On ferme la whitelist par défaut
+		$("#whitelist-gui").hide();
 
 		// Bouton d'ouverture du BOT
 		$("#desktop-wrapper").append(boutonBOT);
 		$("#desktop-bot").on("click", () => {
-			$("#custom-gui").show();
+			$("#bot-gui").show();
+		});
+
+		// Bouton d'ouverture de la whitelist
+		$("#desktop-wrapper").append(boutonWhitelist);
+		$("#desktop-whitelist").on("click", () => {
+			$("#whitelist-gui").show();
+		});
+
+		// Fermeture de la fenêtre du BOT
+		$("#bot-gui-bot-title > span.window-close-style").on("click", () => {
+			$("#bot-gui").hide();
+		});
+
+		// Fermeture de la fenêtre de la whitelist
+		$("#whitelist-gui-whitelist-title > span.window-close-style").on("click", () => {
+			$("#whitelist-gui").hide();
 		});
 
 		// Si le navigateur n'ets pas Firefox, on bloque
@@ -557,11 +632,11 @@ gui = {
 		$("#window-miner .window-content").append(limitesMineurs);
 
 		// Boutons de valeur (OUI/NON)
-		$("#custom-autoTarget-button").css("color", config.autoTarget ? "green" : "red");
-		$("#custom-autoAttack-button").css("color", config.autoAttack ? "green" : "red");
-		$("#custom-firewall-button").css("color", vars.fireWall[3].needUpgrade ? "green" : "red");
-		$("#custom-mineur-button").css("color", config.minage ? "green" : "red");
-		$("#custom-log-button").css("color", config.log ? "green" : "red");
+		$("#bot-autoTarget-button").css("color", config.autoTarget ? "green" : "red");
+		$("#bot-autoAttack-button").css("color", config.autoAttack ? "green" : "red");
+		$("#bot-firewall-button").css("color", vars.fireWall[3].needUpgrade ? "green" : "red");
+		$("#bot-mineur-button").css("color", config.minage ? "green" : "red");
+		$("#bot-log-button").css("color", config.log ? "green" : "red");
 		$("#port-random-button").css("color", config.portToAttack ? "red" : "green");
 
 		// Initialisation couleurs boutons ports
@@ -569,13 +644,8 @@ gui = {
 		$("#port-B-button").css("color", "red");
 		$("#port-C-button").css("color", "red");
 
-		// Fermeture de la fenêtre du BOT
-		$("#custom-gui-bot-title > span.window-close-style").on("click", () => {
-			$("#custom-gui").hide();
-		});
-
 		// Changement du message de hack
-		$(".custom-gui-msg").on("keypress", (e) => {
+		$(".bot-gui-msg").on("keypress", (e) => {
 			if (e.keyCode !== 13) {
 				return;
 			}
@@ -585,31 +655,31 @@ gui = {
 		});
 
 		// Bouton redémarrer
-		$("#custom-restart-button").on("click", () => {
+		$("#bot-restart-button").on("click", () => {
 			app.restart();
 		});
 
 		// Bouton arrêter
-		$("#custom-stop-button").on("click", () => {
+		$("#bot-stop-button").on("click", () => {
 			app.stop();
 		});
 
 		// Bouton attaque automatique
-		$("#custom-autoAttack-button").on("click", () => {
+		$("#bot-autoAttack-button").on("click", () => {
 			config.autoAttack = !config.autoAttack;
 
 			if(config.autoTarget == true) {
 				config.autoTarget = false;
 			}
 
-			$("#custom-autoAttack-button").css("color", config.autoAttack ? "green" : "red");
-			$("#custom-autoTarget-button").css("color", config.autoTarget ? "green" : "red");
+			$("#bot-autoAttack-button").css("color", config.autoAttack ? "green" : "red");
+			$("#bot-autoTarget-button").css("color", config.autoTarget ? "green" : "red");
 		});
 
 		// Bouton cible automatique
-		$("#custom-autoTarget-button").on("click", () => {
+		$("#bot-autoTarget-button").on("click", () => {
 			config.autoTarget = !config.autoTarget;
-			$("#custom-autoTarget-button").css("color", config.autoTarget ? "green" : "red");
+			$("#bot-autoTarget-button").css("color", config.autoTarget ? "green" : "red");
 		});
 
 		// Bouton port automatique
@@ -641,25 +711,42 @@ gui = {
 		});
 
 		// Bouton améliorer le firewall automatiquement
-		$("#custom-firewall-button").on("click", () => {
+		$("#bot-firewall-button").on("click", () => {
 			vars.fireWall[3].needUpgrade = !vars.fireWall[3].needUpgrade;
-			$("#custom-firewall-button").css("color", vars.fireWall[3].needUpgrade ? "green" : "red");
+			$("#bot-firewall-button").css("color", vars.fireWall[3].needUpgrade ? "green" : "red");
 		});
 
 		// Bouton améliorer le mineur automatiquement
-		$("#custom-mineur-button").on("click", () => {
+		$("#bot-mineur-button").on("click", () => {
 			config.minage = !config.minage;
-			$("#custom-mineur-button").css("color", config.minage ? "green" : "red");
+			$("#bot-mineur-button").css("color", config.minage ? "green" : "red");
 		});
 
 		// Bouton afficher les logs console automatiquement
-		$("#custom-log-button").on("click", () => {
+		$("#bot-log-button").on("click", () => {
 			config.log = !config.log;
-			$("#custom-log-button").css("color", config.log ? "green" : "red");
+			$("#bot-log-button").css("color", config.log ? "green" : "red");
+		});
+
+		// Bouton ajouter un pseudo à la whitelist
+		$("#btAddWhitelist").on('click', () => {
+			var pseudo = $("#inputWhitelist").val();
+
+			// Traduction des caractères spéciaux
+			pseudo = pseudo.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;");
+
+			if($.inArray(pseudo, vars.listePseudos) == -1) {
+				vars.listePseudos.push(pseudo);
+				log(`Ajout à la whitelist du pseudo : ${pseudo}`);
+				majWhitelist();
+			} else {
+				alert('Ce pseudo est déjà dans la whitelist !');
+			}
+			$("#inputWhitelist").val("");
 		});
 
 		// Si on fait le bouton entrée sur un input de fréquence
-		$(".custom-gui-freq").on("keypress", (e) => {
+		$(".bot-gui-freq").on("keypress", (e) => {
 			if (e.keyCode !== 13) {
 				return;
 			}
@@ -696,21 +783,47 @@ gui = {
 			changementEffectue();
 		});
 
-		// Rend la fenêtre déplaçable
-		const botWindow = ("#custom-gui");
-		const botWindowTitle = ("#custom-gui-bot-title");
+		// Input de la whitelist
+		$("#inputWhitelist").on("keypress", (e) => {
+			if (e.keyCode !== 13) {
+				return;
+			}
+			$("#btAddWhitelist").click();
+		});
+
+		// Rend la fenêtre du bot déplaçable
+		const botWindow = ("#bot-gui");
+		const botWindowTitle = ("#bot-gui-bot-title");
 		$(document).on("mousedown", botWindowTitle, (e) => {
-			vars.gui.dragReady = true;
-			vars.gui.dragOffset.x = e.pageX - $(botWindow).position().left;
-			vars.gui.dragOffset.y = e.pageY - $(botWindow).position().top;
+			vars.guiBot.dragReady = true;
+			vars.guiBot.dragOffset.x = e.pageX - $(botWindow).position().left;
+			vars.guiBot.dragOffset.y = e.pageY - $(botWindow).position().top;
 		});
 		$(document).on("mouseup", botWindowTitle, () => {
-			vars.gui.dragReady = false;
+			vars.guiBot.dragReady = false;
 		});
 		$(document).on("mousemove", (e) => {
-			if (vars.gui.dragReady) {
-				$(botWindow).css("top", `${e.pageY - vars.gui.dragOffset.y}px`);
-				$(botWindow).css("left", `${e.pageX - vars.gui.dragOffset.x}px`);
+			if (vars.guiBot.dragReady) {
+				$(botWindow).css("top", `${e.pageY - vars.guiBot.dragOffset.y}px`);
+				$(botWindow).css("left", `${e.pageX - vars.guiBot.dragOffset.x}px`);
+			}
+		});
+
+		// Rend la fenêtre de la whitelist déplaçable
+		const whitelistWindow = ("#whitelist-gui");
+		const whitelistWindowTitle = ("#whitelist-gui-whitelist-title");
+		$(document).on("mousedown", whitelistWindowTitle, (e) => {
+			vars.guiWhitelist.dragReady = true;
+			vars.guiWhitelist.dragOffset.x = e.pageX - $(whitelistWindow).position().left;
+			vars.guiWhitelist.dragOffset.y = e.pageY - $(whitelistWindow).position().top;
+		});
+		$(document).on("mouseup", whitelistWindowTitle, () => {
+			vars.guiWhitelist.dragReady = false;
+		});
+		$(document).on("mousemove", (e) => {
+			if (vars.guiWhitelist.dragReady) {
+				$(whitelistWindow).css("top", `${e.pageY - vars.guiWhitelist.dragOffset.y}px`);
+				$(whitelistWindow).css("left", `${e.pageX - vars.guiWhitelist.dragOffset.x}px`);
 			}
 		});
 	}
@@ -790,22 +903,65 @@ function log(message) {
 
 // Clignotement vert de la fenêtre pour confirmer le changement
 function changementEffectue() {
-	$("#custom-gui").css("transition", "all ease-in-out 0.3s");
-	$("#custom-gui").css("box-shadow", "0px 0px 20px green");
+	$("#bot-gui").css("transition", "all ease-in-out 0.3s");
+	$("#bot-gui").css("box-shadow", "0px 0px 20px green");
 
 	setTimeout(function() {
-		$("#custom-gui").css("box-shadow", "0px 0px 0px green");
+		$("#bot-gui").css("box-shadow", "0px 0px 0px green");
 		setTimeout(function () {
-			$("#custom-gui").css("transition", "none");
+			$("#bot-gui").css("transition", "none");
 		}, 500);
 	}, 500);
 }
 
+// Réinitialise toutes les couleurs des ports en rouge
 function resetPorts() {
 	$("#port-random-button").css("color", "red");
 	$("#port-A-button").css("color", "red");
 	$("#port-B-button").css("color", "red");
 	$("#port-C-button").css("color", "red");
+}
+
+// Met à jour graphiquement le spseudos de la whitelist
+function majWhitelist() {
+	$("#listePseudosWhitelist").empty();
+
+	$.each(vars.listePseudos, function(index, pseudo) {
+		$("#listePseudosWhitelist").append(`
+			<div class="pseudoWhitelist" style="display:flex;cursor:pointer;background-color:#2C2D32;border:1px solid white;margin:0.5em;border-radius:5px;padding:0.3em;color:white;">
+				<span class="window-close-style window-close"><img src="../client/img/icon-close.png" class="window-close-img"></span>
+				<div style="margin-left:0.3em;">${pseudo}</div>
+			</div>
+		`);
+	});
+
+	// On recréé l'événement sur tous les boutons graphique de pseudo
+	$(".pseudoWhitelist").on('click', function() {
+		var pseudo = $(this).children()[1].innerHTML;
+		supprimerWhitelist(pseudo);
+	});
+}
+
+// Supprime le pseudo de la whitelist
+function supprimerWhitelist(pseudo) {
+	var nbPos = $.inArray(pseudo, vars.listePseudos);
+	delete vars.listePseudos[nbPos];
+	log(`Suppression dans la whitelist du pseudo : ${pseudo}`);
+	vars.listePseudos = nettoyerTab(vars.listePseudos);
+	majWhitelist();
+}
+
+// Nettoyer tableau
+function nettoyerTab(test_array) {
+    var index = -1,
+        arr_length = test_array ? test_array.length : 0,
+        resIndex = -1,
+        result = [];
+    while (++index < arr_length) {
+        var value = test_array[index];
+        if (value) { result[++resIndex] = value; }
+    }
+    return result;
 }
 
 // Pour empêcher le retour de page avec le bouton supprimer
