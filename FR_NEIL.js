@@ -535,7 +535,7 @@ gui = {
 
 		// Fenêtre de la whitelist
 		const whitelistWindowHTML = `
-		<div id="whitelist-gui" class="window" style="bottom:10px; border-color: rgb(62, 76, 95); color: rgb(191, 207, 210); ${sizeCSSWhitelist} z-index: 10; top: 10%; right: 7%;">
+		<div id="whitelist-gui" class="window" style="border-color: rgb(62, 76, 95); color: rgb(191, 207, 210); ${sizeCSSWhitelist} z-index: 10; top: 10%; right: 7%;">
 			<div id="whitelist-gui-whitelist-title" class="window-title" style="background-color: rgb(62, 76, 95);">
 				📝 Whitelist
 				<span class="window-close-style">
