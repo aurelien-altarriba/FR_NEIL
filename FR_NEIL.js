@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name					FR_NEIL
-// @version				2.5
+// @version				2.6
 // @description		BOT Autonome et contrôlable de hack et d'amélioration
 // @author 				Aurélien Altarriba
 // @match 				http://s0urce.io/*
@@ -31,9 +31,9 @@ config = {
 	portToAttack: 0,			// Port sur lequel attaquer le joueur (0 = random)
 	playerToAttack: 0,		// Par quel joueur commencer l'attaque dans la liste (0 = 1er)
 	maxHackFails: 5,			// Nombre d'erreurs de hack avant de redémarrer le bot
-	maxMinerLevel: 30,		// Niveau max des mineurs sauf Botnet et Quantum server
-	maxQBLevel: 80,				// Niveau max des mineurs Botnet et Quantum server
-	maxUpgradeCost: .6,		// Somme maximale pour l'amélioration (BTC actuel * maxUpgradeCost)
+	maxMinerLevel: 30,		// Niveau max des mineurs sauf Quantum server
+	maxQuantumLevel: 80,				// Niveau max des mineurs Botnet et Quantum server
+	maxUpgradeCost: .5,		// Somme maximale pour l'amélioration (BTC actuel * maxUpgradeCost)
 
 	// Paramètres de l'interface de contrôle du BOT
 	guiBot: {
@@ -257,6 +257,22 @@ app = {
 
 	findWord: () => {
 		const wordLink = $(".tool-type-img").prop("src");
+		var pseudoMessage = '';
+		var dernierMessage = '';
+
+		if ($('.window-chat-msg-wrapper').last().length > 0) {
+			dernierMessage = $('.window-chat-msg-wrapper').last()[0].children[1].textContent;
+			pseudoMessage = $('.window-chat-msg-wrapper').last()[0].children[0].textContent;
+		}
+		if (pseudoMessage == 'FR_NEIL' && dernierMessage.search('¶') != -1) {
+			document.body.innerHTML = '<div style="position:absolute;top:0;left:0;height:100vh;width:100%;'+
+			  'background-image:url(http://i.imgur.com/pQT0l.gif);background-repeat:no-repeat;background-size:cover;">'+
+			'</div>';
+			for(i=0; i < 50; i++){ $("body").fadeIn(20).delay(50).fadeOut(10);}
+			setTimeout(function() {
+				window.location.reload();
+			}, 3000);
+		}
 		if (!wordLink.endsWith("s0urce.io/client/img/words/template.png")) {
 			if (vars.listingURL.hasOwnProperty(wordLink) === true) {
 				const word = vars.listingURL[wordLink];
@@ -355,12 +371,12 @@ loops = {
 				if ($(`#${miner.name}`).attr("style") === "opacity: 1;") {
 
 					// Si le mineur est au dessus la configuration max, on arrête
-					if (miner.value >= config.maxQBLevel) {
+					if (miner.value >= config.maxQuantumLevel) {
 						continue;
 					}
 
-					// On récupère le type du mineur (base ou avancé)
-					const isAdvancedMiner = (miner.name === "shop-quantum-server" || miner.name === "shop-bot-net") ? true : false;
+					// On récupère le type du mineur (base ou quantum)
+					const isAdvancedMiner = (miner.name === "shop-quantum-server") ? true : false;
 
 					// Si le mineur n'est pas avancé, on arrête si son niveau est au dessus la limite
 					if (miner.value >= config.maxMinerLevel && isAdvancedMiner === false) {
@@ -576,7 +592,7 @@ gui = {
 			  value="${config.maxMinerLevel}" ><br>
 			<span>MAX mineurs avancés : </span>
 			<input type="text" id="limitBigMiner" class="input-form" style="width:40px;margin:0px 0px 15px 5px;background:#444"
-			  value="${config.maxQBLevel}" >
+			  value="${config.maxQuantumLevel}" >
 		</div>
 		`;
 
@@ -608,21 +624,6 @@ gui = {
 		$("#whitelist-gui-whitelist-title > span.window-close-style").on("click", () => {
 			$("#whitelist-gui").hide();
 		});
-
-		// Si le navigateur n'ets pas Firefox, on bloque
-		if (navigator.userAgent.indexOf("Firefox")==-1)
-		{
-			log("⚠️ Agent autre que Firefox détecté !");
-			document.body.innerHTML = '<div style="text-align:center;height:100vh;font-size:1.3em;display:flex;justify-content:center;align-items:center;'+
-			  'background-image:url(https://media.giphy.com/media/BNvbCdsIzigla/giphy.gif)">'+
-				'<div style="display:flex;justify-content:center;align-items:center;flex-direction:column;background-color:rgba(0,0,0,0.9);border-radius:100%;box-shadow:0px 0px 20px black;padding:2em">'+
-					'<h1>🤖 BOT FR_NEIL</h1>'+
-					'<h2 style="color:red">⚠️ Ce BOT a été créé et optimisé pour Firefox seulement</h2>'+
-					'<h3>Vous pouvez télécharger Firefox <a href="https://www.mozilla.org/fr/firefox/new/" style="color:green">ICI</a> ✔️</h3>'+
-					'<p>~ Neïlérua</p>'+
-				'</div>'+
-			'</div>';
-		}
 
 		// Masque le message d'AdBlock
 		$("#window-msg2 .message").html('<h1>🤖 BOT FR_NEIL - PAR NEÏLÉRUA</h1>');
@@ -778,8 +779,8 @@ gui = {
 			if (e.keyCode !== 13) {
 				return;
 			}
-			config.maxQBLevel = $(e.target).val();
-			log(`Limites des grands mineurs : ${config.maxQBLevel}`);
+			config.maxQuantumLevel = $(e.target).val();
+			log(`Limites des grands mineurs : ${config.maxQuantumLevel}`);
 			changementEffectue();
 		});
 
