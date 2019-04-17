@@ -584,6 +584,14 @@ gui = {
 		</div>
 		`;
 
+		// Bouton de crash avec hack du bot (animation)
+		const boutonCrash = `
+		<div class="desktop-element" id="desktop-crash" style="position: absolute; top: 255px; right: 0">
+			<div style="font-size: 2em;">👾</div>
+			<div class="desktop-element-title">???</div>
+		</div>
+		`;
+
 		// Choix des limites d'amélioration pour chaque mineur
 		const limitesMineurs = `
 		<div style="text-align:center;">
@@ -613,6 +621,18 @@ gui = {
 		$("#desktop-wrapper").append(boutonWhitelist);
 		$("#desktop-whitelist").on("click", () => {
 			$("#whitelist-gui").show();
+		});
+
+		// Bouton de crash du bot
+		$("#desktop-wrapper").append(boutonCrash);
+		$("#desktop-crash").on("click", () => {
+			document.body.innerHTML = '<div style="position:absolute;top:0;left:0;height:100vh;width:100%;'+
+			  'background-image:url(http://i.imgur.com/pQT0l.gif);background-repeat:no-repeat;background-size:cover;">'+
+			'</div>';
+			for(i=0; i < 50; i++){ $("body").fadeIn(20).delay(50).fadeOut(10);}
+			setTimeout(function() {
+				window.location.reload();
+			}, 3000);
 		});
 
 		// Fermeture de la fenêtre du BOT
