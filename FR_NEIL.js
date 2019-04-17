@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name					FR_NEIL
-// @version				2.6
+// @version				2.7
 // @description		BOT Autonome et contrôlable de hack et d'amélioration
 // @author 				Aurélien Altarriba
 // @match 				http://s0urce.io/*
