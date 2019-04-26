@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name					FR_NEIL
-// @version				2.7
+// @version				2.8
 // @description		BOT Autonome et contrôlable de hack et d'amélioration
 // @author 				Aurélien Altarriba
 // @match 				http://s0urce.io/*
@@ -11,6 +11,9 @@ let config, vars, app, loops, gui;
 
 // CONFIGURATION
 config = {
+
+	// Version du BOT
+	version: '2.8',
 
 	// Message de hack pour la victime
 	message: "☠️ HACKÉ PAR FR_NEIL 💻",
@@ -31,8 +34,7 @@ config = {
 	portToAttack: 0,			// Port sur lequel attaquer le joueur (0 = random)
 	playerToAttack: 0,		// Par quel joueur commencer l'attaque dans la liste (0 = 1er)
 	maxHackFails: 5,			// Nombre d'erreurs de hack avant de redémarrer le bot
-	maxMinerLevel: 30,		// Niveau max des mineurs sauf Quantum server
-	maxQuantumLevel: 80,				// Niveau max des mineurs Botnet et Quantum server
+	maxMinerLevel: 20,		// Niveau max des mineurs sauf Quantum server
 	maxUpgradeCost: .5,		// Somme maximale pour l'amélioration (BTC actuel * maxUpgradeCost)
 
 	// Paramètres de l'interface de contrôle du BOT
@@ -370,11 +372,6 @@ loops = {
 				// Si son amélioration est possible
 				if ($(`#${miner.name}`).attr("style") === "opacity: 1;") {
 
-					// Si le mineur est au dessus la configuration max, on arrête
-					if (miner.value >= config.maxQuantumLevel) {
-						continue;
-					}
-
 					// On récupère le type du mineur (base ou quantum)
 					const isAdvancedMiner = (miner.name === "shop-quantum-server") ? true : false;
 
@@ -597,10 +594,7 @@ gui = {
 		<div style="text-align:center;">
 			<span>MAX mineurs de base : </span>
 			<input type="text" id="limitSmallMiner" class="input-form" style="width:40px;margin:15px 0px 15px 5px;background:#444"
-			  value="${config.maxMinerLevel}" ><br>
-			<span>MAX mineurs avancés : </span>
-			<input type="text" id="limitBigMiner" class="input-form" style="width:40px;margin:0px 0px 15px 5px;background:#444"
-			  value="${config.maxQuantumLevel}" >
+			  value="${config.maxMinerLevel}" >
 		</div>
 		`;
 
@@ -646,10 +640,10 @@ gui = {
 		});
 
 		// Masque le message d'AdBlock
-		$("#window-msg2 .message").html('<h1>🤖 BOT FR_NEIL - PAR NEÏLÉRUA</h1>');
+		$("#window-msg2 .message").html('<h1>🤖 BOT FR_NEIL - Version '+ config.version +'</h1>');
 
 		// MINEURS
-		$("#window-miner .window-content").css("height", "500px");
+		$("#window-miner .window-content").css("height", "455px");
 		$("#window-miner .window-content").append(limitesMineurs);
 
 		// Boutons de valeur (OUI/NON)
@@ -791,16 +785,6 @@ gui = {
 			}
 			config.maxMinerLevel = $(e.target).val();
 			log(`Limite des petits mineurs : ${config.maxMinerLevel}`);
-			changementEffectue();
-		});
-
-		// Input du niveau max du mineur avancé
-		$("#limitBigMiner").on("keypress", (e) => {
-			if (e.keyCode !== 13) {
-				return;
-			}
-			config.maxQuantumLevel = $(e.target).val();
-			log(`Limites des grands mineurs : ${config.maxQuantumLevel}`);
 			changementEffectue();
 		});
 
