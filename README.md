@@ -1,6 +1,6 @@
 # 🤖 FR_NEIL
 BOT autonome et contrôlable de hack et d'amélioration sur http://s0urce.io/
 
-### Version : 2.7
+### Version : 2.8
 
-#### MAJ : Ajout d'un bouton pour provoquer le crash de son bot (animation de hack) *- demande de Lou171515*
+#### MAJ : Suppression de la notion de mineur avancé + Ajout du numéro de version dans la config du BOT
