@@ -1,10 +1,10 @@
-// ==UserScript==
-// @name					FR_NEIL
-// @version				2.8
-// @description		BOT Autonome et contrôlable de hack et d'amélioration
-// @author 				Neïlérua Azer
-// @match 				http://s0urce.io/*
-// ==/UserScript==
+// ====
+// FR_NEIL
+// Version 2.8
+// BOT Autonome et contrôlable de hack et d'amélioration
+// PAR: Neïlérua Azer
+// Lien du jeu: http://s0urce.io/*
+// ====
 
 // Initialisation des variables
 let config, vars, app, loops, gui;
