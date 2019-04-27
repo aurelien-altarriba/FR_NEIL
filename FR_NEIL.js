@@ -2,7 +2,7 @@
 // @name					FR_NEIL
 // @version				2.8
 // @description		BOT Autonome et contrôlable de hack et d'amélioration
-// @author 				Aurélien Altarriba
+// @author 				Neïlérua Azer
 // @match 				http://s0urce.io/*
 // ==/UserScript==
 
