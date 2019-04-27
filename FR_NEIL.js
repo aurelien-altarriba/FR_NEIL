@@ -4,6 +4,7 @@
 // BOT Autonome et contrôlable de hack et d'amélioration
 // PAR: Neïlérua Azer
 // Lien du jeu: http://s0urce.io/
+// Site BOT: fr-neil.jimdofree.com
 // ====
 
 // Initialisation des variables
@@ -16,7 +17,7 @@ config = {
 	version: '2.8',
 
 	// Message de hack pour la victime
-	message: "☠️ HACKÉ PAR FR_NEIL 💻",
+	message: "☠️ BOT: fr-neil.jimdofree.com 💻",
 
 	autoTarget: true,			// Attaque automatique
 	autoAttack: true,			// Cibles automatique
