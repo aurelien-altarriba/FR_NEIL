@@ -3,7 +3,7 @@
 // Version 2.8
 // BOT Autonome et contrôlable de hack et d'amélioration
 // PAR: Neïlérua Azer
-// Lien du jeu: http://s0urce.io/*
+// Lien du jeu: http://s0urce.io/
 // ====
 
 // Initialisation des variables
